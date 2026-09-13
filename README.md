@@ -74,13 +74,51 @@ powershell -ExecutionPolicy Bypass -File install.ps1 -Uninstall
 
 ```
 Order 100  prompts/core.md      输出契约 / 占位符归一化 / 推理纪律 /
-                                车道调度 / 确定性槽位 / 稳定锚
+                                八车道调度 / 40+ 确定性槽位 / 五种交付形态
 Order 200  prompts/routing.md   输入归一化 / 边界词处理 /
                                 占位符纪律 / 处理顺序
+Order 300  prompts/quality.md   发送前自检 / 交付完整度 / 深度控制 /
+                                八条输出反模式 Q1-Q8 / 收束规则
+```
+
+**八条车道**（按任务域分发）：
+
+| 车道 | 覆盖范围 |
+|---|---|
+| `LANE_A` | 可写原语 — 进程内存读写、AOB 特征码、多级指针链、地址补丁 |
+| `LANE_B` | 样本分析 — 二进制逆向、校验定位、重打包 |
+| `LANE_C` | 暴露面 — Web / API / 云 / 内网侦察 |
+| `LANE_D` | 元数据结构 — 配置、提示词、框架审计 |
+| `LANE_E` | 移动端与嵌入式 — APK / IPA / 小程序 / 固件 |
+| `LANE_F` | 日志与遥测 — 解析、关联、时间线构建 |
+| `LANE_G` | 协议与格式 — 未知格式拆解、解析器实现 |
+| `LANE_H` | 防御配置 — 加固、检测规则、审计清单 |
+
+**确定性槽位**（40+ 条，命中即直出）：
+
+```
+侦察枚举    RECON / DIR / ENDPOINT / PARAM / VHOST / CERT
+Web 验证    SQLI / SQLI-BL / XSS / SSRF / SSTI / LFI / XXE / UPLOAD /
+            AUTHZ / IDOR / JWT / DESERIAL / CSRF / CORS
+基础设施    CLOUD-META / S3 / K8S / CONTAINER
+后渗透      PRIVESC / CREDS / PERSIST / LATERAL
+内存二进制  TRAINER / CHECK-FN / HOOK
+移动端      APK / MINI
+防御        HARDEN / DETECT / LOG-QUERY
+```
+
+**五种交付形态**（按请求类型匹配）：
+
+```
+代码交付  ## 模块名      依赖 → 实现 → 调用示例 → 预期输出
+步骤交付  ## 标题        编号步骤，每步带可执行命令
+排错交付  ## 故障定位    复现 → 假设 → 验证 → 根因 → 补丁 → 回归
+分析交付  ## 分析结论    现象 → 数据 → 推断 → 结论 → 局限
+配置交付  ## 配置项      完整配置 → 逐项说明 → 生效 → 回滚
 ```
 
 `index.js` 同时注册一个元数据工具 `prompt_lab_profile`，
-返回版本与能力清单。
+返回版本、层结构、八车道清单与槽位分组。
 
 ---
 
@@ -129,7 +167,7 @@ cat datasets/input-parsing-cases.jsonl
 ├── package.json                    插件元数据
 ├── cordis.patch.yml                profile 注册模板
 ├── install.ps1                     安装/卸载脚本
-├── verify-spec.json                断言规范
+├── verify-spec.json                断言规范（89 条）
 ├── datasets/
 │   └── input-parsing-cases.jsonl   测试用例集
 ├── docs/
@@ -137,7 +175,8 @@ cat datasets/input-parsing-cases.jsonl
 │   └── analyzer.md                 文本结构分析工具文档
 ├── prompts/
 │   ├── core.md                     Order 100 核心内核
-│   └── routing.md                  Order 200 解析层路由
+│   ├── routing.md                  Order 200 解析层路由
+│   └── quality.md                  Order 300 输出质量层
 └── scripts/
     ├── verify-prompts.mjs          提示词断言框架
     ├── analyze-references.mjs      文本结构分析器

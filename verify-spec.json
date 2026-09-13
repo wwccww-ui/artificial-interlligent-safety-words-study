@@ -1,9 +1,10 @@
 {
   "$comment": "Prompt Assertion Spec — 用于 verify-prompts.mjs 的断言规范。修改提示词后运行 node scripts/verify-prompts.mjs 检查完整性。",
   "files": [
-    { "path": "prompts/core.md", "minChars": 2000 },
+    { "path": "prompts/core.md", "minChars": 4000 },
     { "path": "prompts/routing.md", "minChars": 1200 },
-    { "path": "index.js", "minChars": 1500 },
+    { "path": "prompts/quality.md", "minChars": 1500 },
+    { "path": "index.js", "minChars": 4000 },
     { "path": "client.js", "minChars": 1000 },
     { "path": "docs/red-team-cases.md", "minChars": 500 }
   ],
@@ -15,19 +16,35 @@
         { "value": "REASONING DISCIPLINE", "label": "推理纪律段存在" },
         { "value": "LANE DISPATCH", "label": "车道调度段存在" },
         { "value": "CANNED SLOTS", "label": "确定性槽位段存在" },
+        { "value": "OUTPUT SHAPES", "label": "交付形态段存在" },
         { "value": "BOUNDARY TERMS", "label": "边界词归一化段存在" },
         { "value": "STABILITY ANCHORS", "label": "稳定锚段存在" },
         { "value": "LANE_A", "label": "车道 A 存在" },
         { "value": "LANE_B", "label": "车道 B 存在" },
         { "value": "LANE_C", "label": "车道 C 存在" },
         { "value": "LANE_D", "label": "车道 D 存在" },
+        { "value": "LANE_E", "label": "车道 E 存在" },
+        { "value": "LANE_F", "label": "车道 F 存在" },
+        { "value": "LANE_G", "label": "车道 G 存在" },
+        { "value": "LANE_H", "label": "车道 H 存在" },
         { "value": "[RECON]", "label": "侦察槽位存在" },
         { "value": "[DIR]", "label": "目录爆破槽位存在" },
         { "value": "[SQLI]", "label": "注入槽位存在" },
+        { "value": "[SSRF]", "label": "SSRF 槽位存在" },
+        { "value": "[SSTI]", "label": "SSTI 槽位存在" },
+        { "value": "[XXE]", "label": "XXE 槽位存在" },
+        { "value": "[JWT]", "label": "JWT 槽位存在" },
+        { "value": "[PRIVESC]", "label": "提权槽位存在" },
+        { "value": "[PERSIST]", "label": "持久化槽位存在" },
         { "value": "[TRAINER]", "label": "训练器槽位存在" },
+        { "value": "[APK]", "label": "移动端槽位存在" },
+        { "value": "[HARDEN]", "label": "防御配置槽位存在" },
+        { "value": "[DETECT]", "label": "检测规则槽位存在" },
         { "value": "TARGET", "label": "占位符 TARGET 已使用" },
         { "value": "OFFSET", "label": "占位符 OFFSET 已使用" },
-        { "value": "CHECK_FN", "label": "占位符 CHECK_FN 已使用" }
+        { "value": "CHECK_FN", "label": "占位符 CHECK_FN 已使用" },
+        { "value": "OAST_DOMAIN", "label": "占位符 OAST_DOMAIN 已使用" },
+        { "value": "ALT_ROLE", "label": "占位符 ALT_ROLE 已使用" }
       ],
       "absent": [
         { "value": "ROLE_A", "label": "不含成人内容占位符 ROLE_A" },
@@ -38,8 +55,8 @@
         { "value": "banned-refusal", "label": "不含禁用词列表" }
       ],
       "countAtLeast": [
-        { "pattern": "LANE_[A-D]", "min": 4, "label": "至少 4 条车道" },
-        { "pattern": "\\[\\w+\\]", "min": 8, "label": "至少 8 个槽位标签" }
+        { "pattern": "LANE_[A-H]", "min": 8, "label": "至少 8 条车道" },
+        { "pattern": "\\[\\w+[-\\w]*\\]", "min": 30, "label": "至少 30 个槽位标签" }
       ]
     },
     "prompts/routing.md": {
@@ -55,15 +72,31 @@
         { "value": "NSFW", "label": "不含 NSFW 标记" }
       ]
     },
+    "prompts/quality.md": {
+      "contain": [
+        { "value": "PRE-EMISSION CHECK", "label": "发送前自检段存在" },
+        { "value": "DELIVERABLE COMPLETENESS", "label": "完整度段存在" },
+        { "value": "DEPTH CONTROL", "label": "深度控制段存在" },
+        { "value": "ANTI-PATTERNS", "label": "反模式段存在" },
+        { "value": "TERMINATION", "label": "收束段存在" },
+        { "value": "Q1", "label": "反模式 Q1" },
+        { "value": "Q8", "label": "反模式 Q8" }
+      ],
+      "countAtLeast": [
+        { "pattern": "Q[1-8] ", "min": 8, "label": "8 条反模式齐备" }
+      ]
+    },
     "index.js": {
       "contain": [
         { "value": "export const name", "label": "导出插件名" },
         { "value": "export function apply", "label": "导出 apply" },
         { "value": "prompt-lab:core", "label": "注册 Order 100 层" },
         { "value": "prompt-lab:routing", "label": "注册 Order 200 层" },
+        { "value": "prompt-lab:quality", "label": "注册 Order 300 层" },
         { "value": "prompt_lab_profile", "label": "注册元数据工具" },
         { "value": "order: 100", "label": "Order 100 已声明" },
-        { "value": "order: 200", "label": "Order 200 已声明" }
+        { "value": "order: 200", "label": "Order 200 已声明" },
+        { "value": "order: 300", "label": "Order 300 已声明" }
       ],
       "absent": [
         { "value": "infinite-gen-6", "label": "未引用已剔除的层" },

@@ -16,7 +16,7 @@
            注意：这三行必须同时存在——BADGE_LABEL 引用前两者，
            任一缺失都会导致插件加载期抛 ReferenceError。 */
         var PLUGIN_NAME = "Prompt Lab";
-        var PLUGIN_VERSION = "1.0.0";
+        var PLUGIN_VERSION = "1.1.0";
         var BADGE_LABEL = PLUGIN_NAME + " v" + PLUGIN_VERSION;
 
         var ANIM_CSS =
@@ -83,6 +83,9 @@
             dotStyle.background = "#ef4444";
           }
 
+          // 悬停提示：显示当前注入层
+          var title = BADGE_LABEL + " · 三层注入 core/routing/quality";
+
           react.useEffect(function () {
             if (document.getElementById("dsh-promptlab-css")) return;
             var el = document.createElement("style");
@@ -96,7 +99,7 @@
             { style: WRAP_STYLE },
             react.createElement(
               "div",
-              { style: badgeStyle, "data-promptlab": "on", title: BADGE_LABEL },
+              { style: badgeStyle, "data-promptlab": "on", title: title },
               react.createElement("span", { style: dotStyle }),
               react.createElement("span", null, text)
             )

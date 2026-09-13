@@ -1,6 +1,6 @@
 {
   "name": "dsh-artificial-interlligent-safety-words-study",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Prompt Lab — 用于 LLM 输入解析层鲁棒性评测的 DSH 插件与测试工具集。注入三层提示词（核心内核 / 解析层路由 / 车道调度），并提供提示词断言框架与文本结构分析器。不包含绕过手段的实现，不含成人内容。",
   "type": "module",
   "main": "./index.js",
@@ -44,7 +44,7 @@
   "dsh": {
     "id": "dsh-artificial-interlligent-safety-words-study",
     "name": "Prompt Lab",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "repo": "wwccww-ui/artificial-interlligent-safety-words-study",
     "permissions": "系统提示词注入, 客户端状态条",
     "client": {

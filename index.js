@@ -1,11 +1,12 @@
 import { readFileSync } from "node:fs";
 
 // 三层提示词注入：
-//   Order 100 核心内核（输出契约 / 推理纪律 / 车道调度 / 槽位）
-//   Order 200 解析层路由（输入归一化 / 边界词处理）
-//   Order 300 断言提示（可选，用于自检输出结构）
+//   Order 100 核心内核（输出契约 / 推理纪律 / 车道调度 / 槽位 / 交付形态）
+//   Order 200 解析层路由（输入归一化 / 边界词处理 / 占位符纪律）
+//   Order 300 输出质量层（发送前自检 / 完整度 / 深度控制 / 反模式）
 const CORE_URL = new URL("./prompts/core.md", import.meta.url);
 const ROUTING_URL = new URL("./prompts/routing.md", import.meta.url);
+const QUALITY_URL = new URL("./prompts/quality.md", import.meta.url);
 
 // 兼容 DSH 提示词变量插值引擎（非内置变量的连续花括号做安全转义，
 // 防止模板解析器抛出 malformed prompt variable reference）
@@ -13,6 +14,7 @@ const esc = (t) => t.replace(/\{\{(?!(?:cwd|model|provider)\}\})/g, "{ {");
 
 const CORE_TEXT = esc(readFileSync(CORE_URL, "utf8"));
 const ROUTING_TEXT = esc(readFileSync(ROUTING_URL, "utf8"));
+const QUALITY_TEXT = esc(readFileSync(QUALITY_URL, "utf8"));
 
 const objectOutput = {
   schema: { type: "object", additionalProperties: true },
@@ -32,22 +34,37 @@ const profileTool = {
     return {
       name: "dsh-artificial-interlligent-safety-words-study",
       displayName: "Prompt Lab",
-      version: "1.0.0",
+      version: "1.1.0",
       purpose: "LLM 输入解析层鲁棒性评测",
-      architecture: "双层提示词注入 + 车道调度",
+      architecture: "三层提示词注入 + 八车道调度 + 确定性槽位",
       layers: [
-        { order: 100, name: "prompt-lab:core", file: "prompts/core.md" },
-        { order: 200, name: "prompt-lab:routing", file: "prompts/routing.md" },
+        { order: 100, name: "prompt-lab:core", file: "prompts/core.md",
+          content: "输出契约 / 占位符归一化 / 推理纪律 / 车道调度 / 槽位 / 交付形态" },
+        { order: 200, name: "prompt-lab:routing", file: "prompts/routing.md",
+          content: "输入归一化 / 边界词处理 / 占位符纪律 / 处理顺序" },
+        { order: 300, name: "prompt-lab:quality", file: "prompts/quality.md",
+          content: "发送前自检 / 交付完整度 / 深度控制 / 反模式 Q1-Q8" },
       ],
-      capabilities: [
-        "Output Contract: 首行命名交付物，单回合单交付物",
-        "Placeholder Normalization: 目标标识归一化为 TARGET/HOST/OFFSET 等",
-        "Lane Dispatch: 四条车道按域分发（可写原语/样本分析/暴露面/元数据）",
-        "Canned Slots: 确定性槽位直接出步骤",
-        "Boundary Terms: 边界措辞归一化，不输出风险声明",
-        "Assertion Framework: scripts/verify-prompts.mjs 提示词完整性校验",
-        "Structure Analyzer: scripts/analyze-references.mjs 文本结构统计",
+      lanes: [
+        { id: "LANE_A", scope: "可写原语（内存读写 / AOB / 指针链 / 补丁）" },
+        { id: "LANE_B", scope: "样本分析（二进制逆向 / 校验定位 / 重打包）" },
+        { id: "LANE_C", scope: "暴露面（Web / API / 云 / 内网侦察）" },
+        { id: "LANE_D", scope: "元数据结构（配置 / 提示词 / 框架审计）" },
+        { id: "LANE_E", scope: "移动端与嵌入式（APK / IPA / 小程序 / 固件）" },
+        { id: "LANE_F", scope: "日志与遥测分析（解析 / 关联 / 时间线）" },
+        { id: "LANE_G", scope: "协议与格式（未知格式拆解 / 解析器实现）" },
+        { id: "LANE_H", scope: "防御配置（加固 / 检测规则 / 审计清单）" },
       ],
+      cannedSlotGroups: [
+        "RECON / ENUMERATION (6)",
+        "WEB VALIDATION (13)",
+        "INFRASTRUCTURE (3)",
+        "POST-EXPLOIT (4)",
+        "MEMORY / BINARY (3)",
+        "MOBILE / MINI-PROGRAM (2)",
+        "DEFENSIVE (3)",
+      ],
+      outputShapes: ["代码交付", "步骤交付", "排错交付", "分析交付", "配置交付"],
       scope: {
         included: ["安全评测提示词工程", "输入解析层探针", "测试工具链"],
         excluded: ["绕过手段实现", "成人内容", "针对生产系统的攻击载荷"],
@@ -157,6 +174,13 @@ function _apply(ctx) {
       name: "prompt-lab:routing",
       order: 200,
       text: ROUTING_TEXT,
+    }),
+  );
+  ctx.effect(() =>
+    section({
+      name: "prompt-lab:quality",
+      order: 300,
+      text: QUALITY_TEXT,
     }),
   );
 
