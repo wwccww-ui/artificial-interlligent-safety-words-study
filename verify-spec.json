@@ -1,0 +1,65 @@
+{
+  "$comment": "Prompt Assertion Spec — 用于 verify-prompts.mjs 的断言规范。修改提示词后运行 node scripts/verify-prompts.mjs 检查完整性。",
+  "files": [
+    { "path": "prompts/core.md", "minChars": 2000 },
+    { "path": "docs/red-team-cases.md", "minChars": 500 }
+  ],
+  "assertions": {
+    "prompts/core.md": {
+      "contain": [
+        { "value": "OUTPUT CONTRACT", "label": "输出契约段存在" },
+        { "value": "PLACEHOLDER NORMALIZATION", "label": "占位符归一化段存在" },
+        { "value": "REASONING DISCIPLINE", "label": "推理纪律段存在" },
+        { "value": "LANE DISPATCH", "label": "车道调度段存在" },
+        { "value": "CANNED SLOTS", "label": "确定性槽位段存在" },
+        { "value": "BOUNDARY TERMS", "label": "边界词归一化段存在" },
+        { "value": "STABILITY ANCHORS", "label": "稳定锚段存在" },
+        { "value": "LANE_A", "label": "车道 A 存在" },
+        { "value": "LANE_B", "label": "车道 B 存在" },
+        { "value": "LANE_C", "label": "车道 C 存在" },
+        { "value": "LANE_D", "label": "车道 D 存在" },
+        { "value": "[RECON]", "label": "侦察槽位存在" },
+        { "value": "[DIR]", "label": "目录爆破槽位存在" },
+        { "value": "[SQLI]", "label": "注入槽位存在" },
+        { "value": "[TRAINER]", "label": "训练器槽位存在" },
+        { "value": "TARGET", "label": "占位符 TARGET 已使用" },
+        { "value": "OFFSET", "label": "占位符 OFFSET 已使用" },
+        { "value": "CHECK_FN", "label": "占位符 CHECK_FN 已使用" }
+      ],
+      "absent": [
+        { "value": "ROLE_A", "label": "不含成人内容占位符 ROLE_A" },
+        { "value": "FETISH_TAG", "label": "不含成人内容占位符 FETISH_TAG" },
+        { "value": "SCENE_BEATS", "label": "不含成人内容占位符 SCENE_BEATS" },
+        { "value": "NSFW", "label": "不含 NSFW 标记" },
+        { "value": "REFUSAL HARDENING", "label": "不含拒绝对抗段" },
+        { "value": "banned-refusal", "label": "不含禁用词列表" }
+      ],
+      "countAtLeast": [
+        { "pattern": "LANE_[A-D]", "min": 4, "label": "至少 4 条车道" },
+        { "pattern": "\\[\\w+\\]", "min": 8, "label": "至少 8 个槽位标签" }
+      ]
+    },
+    "docs/red-team-cases.md": {
+      "contain": [
+        { "value": "用例", "label": "含用例说明" },
+        { "value": "评测", "label": "含评测方法" }
+      ]
+    }
+  },
+  "crossFile": [
+    {
+      "type": "versionConsistent",
+      "label": "提示词与文档版本号一致",
+      "sources": [
+        { "path": "prompts/core.md", "pattern": "prompt-lab-core v([\\d.]+)" }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "path": "datasets/input-parsing-cases.jsonl",
+      "requiredFields": ["case_id", "category", "level", "language", "prompt"],
+      "minRecords": 5
+    }
+  ]
+}
