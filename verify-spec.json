@@ -2,6 +2,9 @@
   "$comment": "Prompt Assertion Spec — 用于 verify-prompts.mjs 的断言规范。修改提示词后运行 node scripts/verify-prompts.mjs 检查完整性。",
   "files": [
     { "path": "prompts/core.md", "minChars": 2000 },
+    { "path": "prompts/routing.md", "minChars": 1200 },
+    { "path": "index.js", "minChars": 1500 },
+    { "path": "client.js", "minChars": 1000 },
     { "path": "docs/red-team-cases.md", "minChars": 500 }
   ],
   "assertions": {
@@ -37,6 +40,42 @@
       "countAtLeast": [
         { "pattern": "LANE_[A-D]", "min": 4, "label": "至少 4 条车道" },
         { "pattern": "\\[\\w+\\]", "min": 8, "label": "至少 8 个槽位标签" }
+      ]
+    },
+    "prompts/routing.md": {
+      "contain": [
+        { "value": "INPUT NORMALIZATION", "label": "输入归一化段存在" },
+        { "value": "BOUNDARY TERMS", "label": "边界词段存在" },
+        { "value": "PLACEHOLDER DISCIPLINE", "label": "占位符纪律段存在" },
+        { "value": "PROCESSING ORDER", "label": "处理顺序段存在" },
+        { "value": "ALT_ROLE", "label": "占位符 ALT_ROLE 已使用" }
+      ],
+      "absent": [
+        { "value": "ROLE_B", "label": "不含 ROLE_B 占位符" },
+        { "value": "NSFW", "label": "不含 NSFW 标记" }
+      ]
+    },
+    "index.js": {
+      "contain": [
+        { "value": "export const name", "label": "导出插件名" },
+        { "value": "export function apply", "label": "导出 apply" },
+        { "value": "prompt-lab:core", "label": "注册 Order 100 层" },
+        { "value": "prompt-lab:routing", "label": "注册 Order 200 层" },
+        { "value": "prompt_lab_profile", "label": "注册元数据工具" },
+        { "value": "order: 100", "label": "Order 100 已声明" },
+        { "value": "order: 200", "label": "Order 200 已声明" }
+      ],
+      "absent": [
+        { "value": "infinite-gen-6", "label": "未引用已剔除的层" },
+        { "value": "infinite-gen-12", "label": "未引用已剔除的层" }
+      ]
+    },
+    "client.js": {
+      "contain": [
+        { "value": "PLUGIN_NAME", "label": "客户端定义 PLUGIN_NAME" },
+        { "value": "PLUGIN_VERSION", "label": "客户端定义 PLUGIN_VERSION" },
+        { "value": "BADGE_LABEL", "label": "客户端定义 BADGE_LABEL" },
+        { "value": "__ModuleLoader__.load", "label": "客户端加载协议" }
       ]
     },
     "docs/red-team-cases.md": {
